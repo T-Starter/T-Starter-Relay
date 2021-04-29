@@ -23,6 +23,7 @@ import { pulse } from "./utils/health";
 
 export default class Reporter {
   network: NetworkName;
+//  channel: NetworkName;
   transfers: TTransfersRowTransformed[] = [];
   transferIrreversibilityMap: { [key: string]: number } = {};
   reports: TReportsRowTransformed[] = [];
@@ -32,6 +33,14 @@ export default class Reporter {
 
   constructor(networkName: NetworkName) {
     this.network = networkName;
+//    switch (networkName) {
+//      case `telos`: {this.channel = `eos`; break;}
+//      case `eos`: {this.channel = `telos`; break;}
+//      case `wax`: {this.channel = `telos`; break;}
+//      default: {
+//        throw new Error(`Unknown network ${networkName}`);
+//      }
+//    }
   }
 
   log(level: string, ...args) {
@@ -41,6 +50,8 @@ export default class Reporter {
 
   public async start() {
     this.log(`info`, `started`);
+
+    // channels = this.fetchChannels();
 
     while (true) {
       try {
@@ -65,9 +76,10 @@ export default class Reporter {
 
   async fetchTransfers() {
     const contracts = getContractsForNetwork(this.network);
+    const channel = this.xChainNetwork;
     let transfers = await fetchAllRows(this.network)<TTransfersRow>({
       code: contracts.ibc,
-      scope: contracts.ibc,
+      scope: channel,
       table: `transfers`,
       lower_bound: Math.floor(Date.now() / 1e3),
       index_position: `2`,
@@ -90,10 +102,11 @@ export default class Reporter {
 
   async fetchXReports() {
     const xChainNetwork = this.xChainNetwork;
+    const channel = this.network;
     const contracts = getContractsForNetwork(xChainNetwork);
     const reports = await fetchAllRows(xChainNetwork)<TReportsRow>({
       code: contracts.ibc,
-      scope: contracts.ibc,
+      scope: channel,
       table: `reports`,
       lower_bound: Math.floor(Date.now() / 1e3),
       index_position: `3`,
@@ -154,6 +167,7 @@ export default class Reporter {
       );
 
     const xcontracts = getContractsForNetwork(toBlockchain);
+//    logger.log(`info`,JSON.stringify(xcontracts));
     try {
       const tx = await sendTransaction(toBlockchain)({
         account: xcontracts.ibc,
@@ -166,6 +180,7 @@ export default class Reporter {
         ],
         data: {
           reporter: xcontracts.reporterAccount,
+          channel: this.network,
           transfer: transferToProcess,
         },
       });
@@ -216,6 +231,7 @@ export default class Reporter {
         ],
         data: {
           reporter: xcontracts.reporterAccount,
+          channel: this.network,
           report_id: reportToExecute.id,
         },
       });
@@ -253,6 +269,7 @@ export default class Reporter {
       ],
       data: {
         reporter: xcontracts.reporterAccount,
+        channel: this.network,
         report_id: reportToExecute.id,
       },
     });
@@ -299,6 +316,8 @@ export default class Reporter {
       case `eos`:
         return `telos`;
       case `telos`:
+        return `eos`;
+      case `wax`:
         return `eos`;
       default: {
         throw new Error(
