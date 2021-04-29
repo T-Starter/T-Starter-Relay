@@ -52,19 +52,21 @@ export type TChannelRow = {
 export type TAccountsRow = {
   balance: string;
 };
+
 export type TTransfersRow = {
-  id: number|string; // 0;
-  transaction_id: string; // "e33e97a9932485223a8a673e767127002d163b579ccba57366dde3d1175ad92a";
-  from_blockchain: string; // "eos";
-  to_blockchain: string; // "telos";
-  from_account: string; // "ibc1eos1rep1";
-  to_account: string; // "cmichelonwax";
-  quantity: string; // "0.123456789 EOSDT";
-  memo: string;
-  transaction_time: string; // "2020-05-20T11:29:56";
-  expires_at: string; // "2020-05-21T11:29:56";
+  id: number|string; // 4;
+  transaction_id: string; // "5910cc316d55554ea6909888814fdf826b3589a0893ab2cb96019e4cdd1bfc09";
+  from_blockchain: string; // "telos";
+  to_blockchain: string; // "eos";
+  from_account: string; // "fuzzytestnet";
+  to_account: string; // "fuzzytestnet";
+  quantity: string; // "2.0000 START";
+  memo: string; // "Ui from telos to eos"
+  transaction_time: string; // "2021-04-28T14:40:38";
+  expires_at: string; // "2021-05-05T14:40:38";
   is_refund: number; // 0;
 };
+
 export type TTransfersRowTransformed = Omit<TTransfersRow, "id" | "is_refund"> & {
   id: number;
   is_refund: boolean;
@@ -76,7 +78,7 @@ export type TReportsRow = {
   id: number|string; // 0,
   transfer: TTransfersRow
   confirmed: number; // 0,
-  confirmed_by: string[]; // [ 'ibc1wax1rep1' ],
+  confirmed_by: string[]; // [ 'r1.start' ],
   executed: number; // 0,
   failed: number; // 0,
   failed_by: string[]; // []

@@ -2,7 +2,6 @@ import { Api } from "eosjs";
 import { JsSignatureProvider } from "eosjs/dist/eosjs-jssig";
 import { TextDecoder, TextEncoder } from "util";
 import { getRpc } from "./networks";
-import { logger } from "../logger";
 import { getEnvConfig } from "../dotenv";
 
 export const getApi: (networkName: string) => Api = (() => {

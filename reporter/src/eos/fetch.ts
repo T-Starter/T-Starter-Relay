@@ -1,7 +1,7 @@
 import { Action } from "eosjs/dist/eosjs-serialize";
 import { NetworkName } from "../types";
 import { getApi } from "./api";
-import { getContractsForNetwork, getRpc } from "./networks";
+import { getRpc } from "./networks";
 import { logger } from "../logger";
 import { TTransactionResult } from "./types";
 import { getEnvConfig } from "../dotenv";

@@ -52,7 +52,6 @@ export default class Reporter {
         for (const channel of this.channels) {
           if (Boolean(channel.enabled)) {
             this.channel = <NetworkName>channel.channel_name;
-//          logger.log(`info`, `begin : `, this.network, `=>`, this.channel);
 
             try {
               await Promise.all([
@@ -70,8 +69,6 @@ export default class Reporter {
             } catch (error) {
               this.log(`error`, extractRpcError(error));
             }
-
-//          logger.log(`info`, `done : `, this.network, `=>`, this.channel);
           }
         }
 
