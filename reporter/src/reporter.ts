@@ -8,6 +8,7 @@ import { logger } from "./logger";
 import {
   isNetworkName,
   NetworkName,
+  TChannelRow,
   TReportsRow,
   TReportsRowTransformed,
   TTransfersRow,
@@ -23,7 +24,8 @@ import { pulse } from "./utils/health";
 
 export default class Reporter {
   network: NetworkName;
-//  channel: NetworkName;
+  channel: NetworkName;
+  channels: TChannelRow[] = [];
   transfers: TTransfersRowTransformed[] = [];
   transferIrreversibilityMap: { [key: string]: number } = {};
   reports: TReportsRowTransformed[] = [];
@@ -33,14 +35,6 @@ export default class Reporter {
 
   constructor(networkName: NetworkName) {
     this.network = networkName;
-//    switch (networkName) {
-//      case `telos`: {this.channel = `eos`; break;}
-//      case `eos`: {this.channel = `telos`; break;}
-//      case `wax`: {this.channel = `telos`; break;}
-//      default: {
-//        throw new Error(`Unknown network ${networkName}`);
-//      }
-//    }
   }
 
   log(level: string, ...args) {
@@ -51,35 +45,60 @@ export default class Reporter {
   public async start() {
     this.log(`info`, `started`);
 
-    // channels = this.fetchChannels();
-
     while (true) {
       try {
-        await Promise.all([
-          this.fetchTransfers(),
-          this.fetchXReports(),
-          this.fetchHeadBlockNumbers(),
-        ]);
+        await this.fetchChannels();
 
-        this.printState();
-        pulse(this.network, this.currentHeadBlock, this.currentHeadTime);
+        for (const channel of this.channels) {
+          if (Boolean(channel.enabled)) {
+            this.channel = <NetworkName>channel.channel_name;
+//          logger.log(`info`, `begin : `, this.network, `=>`, this.channel);
 
-        await this.reportTransfers();
-        await this.executeReports();
+            try {
+              await Promise.all([
+                this.fetchTransfers(),
+                this.fetchXReports(),
+                this.fetchHeadBlockNumbers(),
+              ]);
+
+              this.printState();
+              pulse(this.network, this.currentHeadBlock, this.currentHeadTime);
+
+              await this.reportTransfers();
+              await this.executeReports();
+
+            } catch (error) {
+              this.log(`error`, extractRpcError(error));
+            }
+
+//          logger.log(`info`, `done : `, this.network, `=>`, this.channel);
+          }
+        }
+
       } catch (error) {
         this.log(`error`, extractRpcError(error));
+
       } finally {
         await sleep(10000);
       }
     }
   }
 
+  async fetchChannels() {
+    const contracts = getContractsForNetwork(this.network);
+
+    this.channels = await fetchAllRows(this.network)<TChannelRow>({
+      code: contracts.ibc,
+      scope: contracts.ibc,
+      table: `channels`
+    });
+  }
+
   async fetchTransfers() {
     const contracts = getContractsForNetwork(this.network);
-    const channel = this.xChainNetwork;
     let transfers = await fetchAllRows(this.network)<TTransfersRow>({
       code: contracts.ibc,
-      scope: channel,
+      scope: this.channel,
       table: `transfers`,
       lower_bound: Math.floor(Date.now() / 1e3),
       index_position: `2`,
@@ -101,12 +120,12 @@ export default class Reporter {
   }
 
   async fetchXReports() {
-    const xChainNetwork = this.xChainNetwork;
-    const channel = this.network;
+    const xChainNetwork = this.channel;
+    const xChainChannel = this.network;
     const contracts = getContractsForNetwork(xChainNetwork);
     const reports = await fetchAllRows(xChainNetwork)<TReportsRow>({
       code: contracts.ibc,
-      scope: channel,
+      scope: xChainChannel,
       table: `reports`,
       lower_bound: Math.floor(Date.now() / 1e3),
       index_position: `3`,
@@ -311,28 +330,12 @@ export default class Reporter {
     return `${transfer.from_blockchain}|${transfer.id}|${transfer.transaction_id}`;
   }
 
-  private get xChainNetwork(): NetworkName {
-    switch (this.network) {
-      case `eos`:
-        return `telos`;
-      case `telos`:
-        return `eos`;
-      case `wax`:
-        return `eos`;
-      default: {
-        throw new Error(
-          `xChainNetwork: Unknown current network ${this.network}`
-        );
-      }
-    }
-  }
-
   private printState() {
-    // this.log(`verbose`, `tranfers:`, this.transfers);
-    // this.log(`verbose`, `reports:`, this.reports);
-    // this.log(
-    //   `verbose`,
-    //   `headBlock: ${this.currentHeadBlock} irreversible: ${this.currentIrreversibleHeadBlock}`
-    // );
+//     this.log(`verbose`, `tranfers:`, this.transfers);
+//     this.log(`verbose`, `reports:`, this.reports);
+//     this.log(
+//       `verbose`,
+//       `headBlock: ${this.currentHeadBlock} irreversible: ${this.currentIrreversibleHeadBlock}`
+//     );
   }
 }

@@ -151,6 +151,7 @@ export const sendTransaction = (network: NetworkName) => async (
     });
   }
 
+//  logger.log(`info`, `==`, network, `==`);
 //  _actions.forEach((act) =>
 //      logger.log(`info`, JSON.stringify(act, null, 4))
 //  );

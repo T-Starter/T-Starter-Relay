@@ -42,6 +42,13 @@ export function isNetworkName(networkName: string): networkName is NetworkName {
   return false;
 }
 
+export type TChannelRow = {
+  channel_name: string;
+  remote_contract: string;
+  next_transfer_id: number;
+  enabled: number;
+};
+
 export type TAccountsRow = {
   balance: string;
 };
