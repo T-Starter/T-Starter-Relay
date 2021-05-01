@@ -58,7 +58,5 @@ export const extractRpcError = (err: Error|RpcError|any) => {
   return message
 }
 
-// export const ALL_NETWORKS: NetworkName[] = [`eos`, `telos`, `wax`];
-// export const NETWORKS_TO_WATCH: NetworkName[] = [`eos`, `telos`, `wax`];
-export const ALL_NETWORKS: NetworkName[] = [`eos`, `telos`];
-export const NETWORKS_TO_WATCH: NetworkName[] = [`eos`, `telos`];
+export const ALL_NETWORKS: NetworkName[] = [`eos`, `telos`, `wax`];
+export const NETWORKS_TO_WATCH: NetworkName[] = [`eos`, `telos`, `wax`];
