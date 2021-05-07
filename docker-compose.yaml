@@ -8,3 +8,19 @@ services:
     container_name: tstarter1
     volumes:
       - /storagepool/tstarter/env-commands-1:/env-commands
+  tstarter2:
+    command: "/bin/bash -c /home/node/app/reporter/run.sh"
+    build:
+      context: .
+    image: "tstarter:v1"
+    container_name: tstarter2
+    volumes:
+      - /storagepool/tstarter/env-commands-2:/env-commands
+  tstarter3:
+    command: "/bin/bash -c /home/node/app/reporter/run.sh"
+    build:
+      context: .
+    image: "tstarter:v1"
+    container_name: tstarter3
+    volumes:
+      - /storagepool/tstarter/env-commands-3:/env-commands
