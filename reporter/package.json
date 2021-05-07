@@ -1,5 +1,5 @@
 {
-  "name": "ibc-reporter",
+  "name": "tstarter-reporter",
   "description": "Watches all chains for transactions and inserts them into a database",
   "version": "3.0.0",
   "author": "Rory Mapstone",
