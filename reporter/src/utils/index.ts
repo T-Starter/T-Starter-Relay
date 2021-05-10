@@ -23,7 +23,7 @@ export const formatBloksTransaction = (network: NetworkName, txId: string) => {
   } else {
     switch (network) {
       case `eos`:
-        bloksSubdomain = `bloks.io`;
+        bloksSubdomain = `jungle3.bloks.io`;
         break;
       case `telos`:
         bloksSubdomain = `telos-test.bloks.io`;

@@ -183,7 +183,6 @@ export default class Reporter {
       );
 
     const xcontracts = getContractsForNetwork(toBlockchain);
-//    logger.log(`info`,JSON.stringify(xcontracts));
     try {
       const tx = await sendTransaction(toBlockchain)({
         account: xcontracts.ibc,

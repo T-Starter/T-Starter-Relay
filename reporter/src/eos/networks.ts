@@ -28,11 +28,11 @@ export const getContractsForNetwork = (
   } else {
     switch (network) {
       case `eos`:
-        return {ibc: `bridge.start`, cpuPayer: `cpu.start`, ...((envConfig.eostest || {}) as any)};
+        return {ibc: `bridge.start`, cpuPayer: `cpu.start`, ...((envConfig.eos || {}) as any)};
       case `telos`:
-        return {ibc: `bridge.start`, cpuPayer: `cpu.start`, ...((envConfig.telostest || {}) as any)};
+        return {ibc: `bridge.start`, cpuPayer: `cpu.start`, ...((envConfig.telos || {}) as any)};
       case `wax`:
-        return {ibc: `bridge.start`, cpuPayer: `cpu.start`, ...((envConfig.waxtest || {}) as any)};
+        return {ibc: `bridge.start`, cpuPayer: `cpu.start`, ...((envConfig.wax || {}) as any)};
       default:
         throw new Error(`No contract accounts for "${network}" network defined yet`);
     }
