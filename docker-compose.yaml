@@ -24,3 +24,27 @@ services:
     container_name: tstarter3
     volumes:
       - /storagepool/tstarter/env-commands-3:/env-commands
+  tstarter-test1:
+    command: "/bin/bash -c /home/node/app/reporter/run.sh"
+    build:
+      context: .
+    image: "tstarter-test:v1"
+    container_name: tstarter-test1
+    volumes:
+      - /storagepool/tstarter-testnet/env-commands-1:/env-commands
+  tstarter-test2:
+    command: "/bin/bash -c /home/node/app/reporter/run.sh"
+    build:
+      context: .
+    image: "tstarter-test:v1"
+    container_name: tstarter-test2
+    volumes:
+      - /storagepool/tstarter-testnet/env-commands-2:/env-commands
+  tstarter-test3:
+    command: "/bin/bash -c /home/node/app/reporter/run.sh"
+    build:
+      context: .
+    image: "tstarter-test:v1"
+    container_name: tstarter-test3
+    volumes:
+      - /storagepool/tstarter-testnet/env-commands-3:/env-commands
