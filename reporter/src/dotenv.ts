@@ -43,3 +43,13 @@ export const getEnvConfig = () => {
     };
   };
 };
+
+// Move NETWORKS_TO_WATCH to alow it to be set in the .env file
+export const getNetworksToWatch = () => {
+  const val = process.env[`NETWORKS_TO_WATCH`];
+  if (!val) {
+    return ALL_NETWORKS
+  } else {
+    return (val.split(`,`).map((x) => x.trim() as NetworkName) || ALL_NETWORKS) as NetworkName[];
+  }
+}
